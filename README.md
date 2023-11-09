@@ -16,7 +16,7 @@ Quick Stash is a mod for the game Core Keeper that enhances inventory management
 
 ## Installation
 
-To install Quick Stash And Get you need to find the mod in the Mods menu in the game, and then subscribe to it. If you need mod files for manual installation, download them from: Mod.IO
+To install Quick Stash And Get you need to find the mod in the Mods menu in the game, and then subscribe to it. If you need mod files for manual installation, download them from [releases page](https://github.com/futroo/Core-Keeper-QuickStashAndGet/releases "Releases Page") or [Mod.IO](https://mod.io/g/corekeeper/m/quickstash "Mod.IO")
 
 ## Contributing
 
