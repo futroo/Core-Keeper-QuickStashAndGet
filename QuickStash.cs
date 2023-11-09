@@ -27,8 +27,7 @@ public class QuickStash : IMod
     
     public void Init()
     {
-        UnityEngine.Debug.Log("Successfully initiated QuickStashAndGet V" + Version);
-        
+        UnityEngine.Debug.Log("Successfully initiated QuickStashAndGet V" + Version);   
     }
 
     public void Shutdown()
@@ -48,14 +47,11 @@ public class QuickStash : IMod
 
     public void Update()
     {
-        if (GameManagers.GetMainManager() == null || !GameManagers.GetMainManager().currentSceneHandler.isInGame)
+        if (GameManagers.GetMainManager() == null || !GameManagers.GetMainManager().currentSceneHandler.isInGame || player == null)
         {
             return;
         }
-        if(player == null)
-        {
-            return;
-        }
+
         if (player.GetButtonDown("FutrooModQuickStashToNearby"))
         {
             QuickStashToNearby();
@@ -80,15 +76,10 @@ public class QuickStash : IMod
 
         PlayerController pl = GameManagers.GetMainManager().player;
 
-        if (pl == null)
+        if (pl == null || pl.playerInventoryHandler == null)
         {
             return;
         }
-        if (pl.playerInventoryHandler == null)
-        {
-            return;
-        }
-
 
         int chestCount = 0;
 
@@ -103,26 +94,20 @@ public class QuickStash : IMod
                 {
                     Transform _chest = cameraManager.GetChild(i).GetChild(z);
 
-                    if (_chest.name.Contains("Chest"))
+                    if (_chest.name.Contains("Chest") && _chest.gameObject.activeInHierarchy && IsWithinDistance(pl.WorldPosition, _chest.localPosition, nearbyDistance))
                     {
-                        if (_chest.gameObject.activeInHierarchy)
-                        {
-                            if (IsWithinDistance(pl.WorldPosition, _chest.localPosition, nearbyDistance))
-                            {
-                                Chest chestComponent = _chest.GetComponent<Chest>();
-                                if (chestComponent == null)
-                                {
-                                    continue;
-                                }
-                                InventoryHandler chestInventoryHandler = chestComponent.inventoryHandler;
-                                if (chestInventoryHandler == null)
-                                {
-                                    continue;
-                                }
-                                pl.playerInventoryHandler.QuickStack(chestInventoryHandler);
-                                chestCount++;
-                            }
-                        }
+						Chest chestComponent = _chest.GetComponent<Chest>();
+						if (chestComponent == null)
+						{
+							continue;
+						}
+						InventoryHandler chestInventoryHandler = chestComponent.inventoryHandler;
+						if (chestInventoryHandler == null)
+						{
+							continue;
+						}
+						pl.playerInventoryHandler.QuickStack(chestInventoryHandler);
+						chestCount++;
                     }
                 }
             }
@@ -146,15 +131,11 @@ public class QuickStash : IMod
         lastUsed = Time.frameCount;
 
         PlayerController pl = GameManagers.GetMainManager().player;
-        if (pl == null)
-        {
-            return;
-        }
-        if (pl.playerInventoryHandler == null)
-        {
-            return;
-        }
 
+        if (pl == null || pl.playerInventoryHandler == null)
+        {
+            return;
+        }
 
         int chestCount = 0;
 
@@ -168,26 +149,20 @@ public class QuickStash : IMod
                 {
                     Transform _chest = cameraManager.GetChild(i).GetChild(z);
 
-                    if (_chest.name.Contains("Chest"))
+                    if (_chest.name.Contains("Chest") && _chest.gameObject.activeInHierarchy && IsWithinDistance(pl.WorldPosition, _chest.localPosition, nearbyDistance))
                     {
-                        if (_chest.gameObject.activeInHierarchy)
+                        Chest chestComponent = _chest.GetComponent<Chest>();
+                        if (chestComponent == null)
                         {
-                            if (IsWithinDistance(pl.WorldPosition, _chest.localPosition, nearbyDistance))
-                            {
-                                Chest chestComponent = _chest.GetComponent<Chest>();
-                                if (chestComponent == null)
-                                {
-                                    continue;
-                                }
-                                InventoryHandler chestInventoryHandler = chestComponent.inventoryHandler;
-                                if (chestInventoryHandler == null)
-                                {
-                                    continue;
-                                }
-                                chestInventoryHandler.QuickStack(pl.playerInventoryHandler);
-                                chestCount ++;
-                            }
+                            continue;
                         }
+                        InventoryHandler chestInventoryHandler = chestComponent.inventoryHandler;
+                        if (chestInventoryHandler == null)
+                        {
+                            continue;
+                        }
+                        chestInventoryHandler.QuickStack(pl.playerInventoryHandler);
+                        chestCount ++;
                     }
                 }
             }
