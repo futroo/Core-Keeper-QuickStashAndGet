@@ -24,10 +24,10 @@ public class QuickStash : IMod
 
         RewiredExtensionModule.rewiredStart += OnRewiredStart;
     }
-    
+
     public void Init()
     {
-        UnityEngine.Debug.Log("Successfully initiated QuickStashAndGet V" + Version);   
+        UnityEngine.Debug.Log("Successfully initiated QuickStashAndGet V" + Version);
     }
 
     public void Shutdown()
@@ -96,18 +96,18 @@ public class QuickStash : IMod
 
                     if (_chest.name.Contains("Chest") && _chest.gameObject.activeInHierarchy && IsWithinDistance(pl.WorldPosition, _chest.localPosition, nearbyDistance))
                     {
-						Chest chestComponent = _chest.GetComponent<Chest>();
-						if (chestComponent == null)
-						{
-							continue;
-						}
-						InventoryHandler chestInventoryHandler = chestComponent.inventoryHandler;
-						if (chestInventoryHandler == null)
-						{
-							continue;
-						}
-						pl.playerInventoryHandler.QuickStack(chestInventoryHandler);
-						chestCount++;
+                        Chest chestComponent = _chest.GetComponent<Chest>();
+                        if (chestComponent == null)
+                        {
+                            continue;
+                        }
+                        InventoryHandler chestInventoryHandler = chestComponent.inventoryHandler;
+                        if (chestInventoryHandler == null)
+                        {
+                            continue;
+                        }
+                        pl.playerInventoryHandler.QuickStack(chestInventoryHandler);
+                        chestCount++;
                     }
                 }
             }
@@ -162,7 +162,7 @@ public class QuickStash : IMod
                             continue;
                         }
                         chestInventoryHandler.QuickStack(pl.playerInventoryHandler);
-                        chestCount ++;
+                        chestCount++;
                     }
                 }
             }
@@ -187,6 +187,6 @@ public class QuickStash : IMod
     {
         Vector3 textPos = GameManagers.GetMainManager().player.RenderPosition + new Vector3(0, 1.5f, 0);
         GameManagers.GetManager<TextManager>().SpawnCoolText(text, textPos, color, TextManager.FontFace.thinSmall, 0.2f, 1, 2, 0.8f, 0.8f);
-        
+
     }
 }
