@@ -4,10 +4,15 @@ using Rewired;
 using CoreLib;
 using CoreLib.RewiredExtension;
 using CoreLib.Util;
+using CoreLib.Util.Extensions;
+using System.Linq;
+using System.Collections.Generic;
+using System.IO;
+using Unity.NetCode;
 
 public class QuickStash : IMod
 {
-    private const string Version = "0.0.1";
+    private const string Version = "1.0.0";
 
     private Player player;
 
@@ -82,44 +87,35 @@ public class QuickStash : IMod
         }
 
         int chestCount = 0;
-
+		
         Transform cameraManager = GameObject.Find("Camera Manager").transform;
+        List<Transform> origoTransforms = cameraManager.GetAllChildren().Where(obj => obj.name == "OrigoTransform").ToList();
 
-        for (int i = 0; i < cameraManager.childCount; i++)
+        foreach(Transform t in origoTransforms)
         {
-            if (cameraManager.GetChild(i).name == "OrigoTransform")
+            foreach (var _chest in t.GetAllChildren().Where(obj => obj.name.Contains("Chest") && obj.gameObject.activeInHierarchy))
             {
-
-                for (int z = 0; z < cameraManager.GetChild(i).childCount; z++)
+                Chest _chestComponent = _chest.GetComponent<Chest>();
+                if (_chestComponent != null && IsInRange(pl.WorldPosition, _chestComponent.WorldPosition, nearbyDistance))
                 {
-                    Transform _chest = cameraManager.GetChild(i).GetChild(z);
-
-                    if (_chest.name.Contains("Chest") && _chest.gameObject.activeInHierarchy && IsWithinDistance(pl.WorldPosition, _chest.localPosition, nearbyDistance))
+                    InventoryHandler chestInventoryHandler = _chestComponent.inventoryHandler;
+                    if (chestInventoryHandler != null)
                     {
-                        Chest chestComponent = _chest.GetComponent<Chest>();
-                        if (chestComponent == null)
-                        {
-                            continue;
-                        }
-                        InventoryHandler chestInventoryHandler = chestComponent.inventoryHandler;
-                        if (chestInventoryHandler == null)
-                        {
-                            continue;
-                        }
                         pl.playerInventoryHandler.QuickStack(chestInventoryHandler);
                         chestCount++;
                     }
                 }
             }
         }
-
         if (chestCount > 0)
         {
-            CreateCoolText("Stashing to " + chestCount + " chest(s).", new Color(0.769f, 0f, 1f));
+            Vector3 _textPos = GameManagers.GetMainManager().player.RenderPosition + new Vector3(0, 1.5f, 0);
+            CreateCoolText("Stashing to " + chestCount + " chest(s).", new Color(0.769f, 0f, 1f), _textPos);
         }
         else
         {
-            CreateCoolText("Chests not found.", new Color(1f, 0f, 0f));
+            Vector3 _textPos = GameManagers.GetMainManager().player.RenderPosition + new Vector3(0, 1.5f, 0);
+            CreateCoolText("Chests not found.", new Color(1f, 0f, 0f), _textPos);
         }
     }
     private void QuickGetFromNearby()
@@ -140,27 +136,18 @@ public class QuickStash : IMod
         int chestCount = 0;
 
         Transform cameraManager = GameObject.Find("Camera Manager").transform;
+        List<Transform> origoTransforms = cameraManager.GetAllChildren().Where(obj => obj.name == "OrigoTransform").ToList();
 
-        for (int i = 0; i < cameraManager.childCount; i++)
+        foreach (Transform t in origoTransforms)
         {
-            if (cameraManager.GetChild(i).name == "OrigoTransform")
+            foreach (var _chest in t.GetAllChildren().Where(obj => obj.name.Contains("Chest") && obj.gameObject.activeInHierarchy))
             {
-                for (int z = 0; z < cameraManager.GetChild(i).childCount; z++)
+                Chest _chestComponent = _chest.GetComponent<Chest>();
+                if (_chestComponent != null && IsInRange(pl.WorldPosition, _chestComponent.WorldPosition, nearbyDistance))
                 {
-                    Transform _chest = cameraManager.GetChild(i).GetChild(z);
-
-                    if (_chest.name.Contains("Chest") && _chest.gameObject.activeInHierarchy && IsWithinDistance(pl.WorldPosition, _chest.localPosition, nearbyDistance))
+                    InventoryHandler chestInventoryHandler = _chestComponent.inventoryHandler;
+                    if (chestInventoryHandler != null)
                     {
-                        Chest chestComponent = _chest.GetComponent<Chest>();
-                        if (chestComponent == null)
-                        {
-                            continue;
-                        }
-                        InventoryHandler chestInventoryHandler = chestComponent.inventoryHandler;
-                        if (chestInventoryHandler == null)
-                        {
-                            continue;
-                        }
                         chestInventoryHandler.QuickStack(pl.playerInventoryHandler);
                         chestCount++;
                     }
@@ -170,23 +157,23 @@ public class QuickStash : IMod
 
         if (chestCount > 0)
         {
-            CreateCoolText("Getting from " + chestCount + " chest(s).", new Color(0.451f, 0.902f, 0f));
+            Vector3 _textPos = GameManagers.GetMainManager().player.RenderPosition + new Vector3(0, 1.5f, 0);
+            CreateCoolText("Getting from " + chestCount + " chest(s).", new Color(0.451f, 0.902f, 0f), _textPos);
         }
         else
         {
-            CreateCoolText("Chests not found.", new Color(1f, 0f, 0f));
+            Vector3 _textPos = GameManagers.GetMainManager().player.RenderPosition + new Vector3(0, 1.5f, 0);
+            CreateCoolText("Chests not found.", new Color(1f, 0f, 0f), _textPos);
         }
     }
-    private bool IsWithinDistance(Vector3 position1, Vector3 position2, float distanceThreshold)
+    private bool IsInRange(Vector3 position1, Vector3 position2, float distanceThreshold)
     {
         float distance = Vector3.Distance(position1, position2);
         return distance < distanceThreshold;
     }
 
-    private static void CreateCoolText(string text, Color color)
+    private static void CreateCoolText(string text, Color color, Vector3 pos)
     {
-        Vector3 textPos = GameManagers.GetMainManager().player.RenderPosition + new Vector3(0, 1.5f, 0);
-        GameManagers.GetManager<TextManager>().SpawnCoolText(text, textPos, color, TextManager.FontFace.thinSmall, 0.2f, 1, 2, 0.8f, 0.8f);
-
+        GameManagers.GetManager<TextManager>().SpawnCoolText(text, pos, color, TextManager.FontFace.thinSmall, 0.2f, 1, 2, 0.8f, 0.8f);
     }
 }
