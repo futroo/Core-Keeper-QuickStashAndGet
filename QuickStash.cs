@@ -9,30 +9,45 @@ using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using Unity.NetCode;
+using static CreditsData;
+using System;
 
 public class QuickStash : IMod
 {
-    private const string Version = "1.0.0";
+    public const string VERSION = "1.0.1";
+    public const string NAME = "QuickStashAndGet";
+    public const string AUTHOR = "Futroo";
+
+    private LoadedMod modInfo;
 
     private Player player;
 
     private int lastUsed = 0;
     private int cooldown = 60;
 
-    private float nearbyDistance = 4f;
+    private float nearbyDistance = 5f;
 
     public void EarlyInit()
     {
+        UnityEngine.Debug.Log($"[{NAME}]: Version: {VERSION}");
+        modInfo = API.ModLoader.LoadedMods.FirstOrDefault(obj => obj.Handlers.Contains(this));
+        if (modInfo == null)
+        {
+            UnityEngine.Debug.Log($"[{NAME}]: Failed to load {NAME}!");
+            return;
+        }
+        UnityEngine.Debug.Log($"[{NAME}]: Mod loaded successfully!");
+
         CoreLibMod.LoadModules(typeof(RewiredExtensionModule));
-        RewiredExtensionModule.AddKeybind("FutrooModQuickStashToNearby", "Quick stash to nearby (Futroo Mod)", KeyboardKeyCode.A, ModifierKey.Control);
-        RewiredExtensionModule.AddKeybind("FutrooModQuickGetFromNearby", "Quick get from nearby (Futroo Mod)", KeyboardKeyCode.D, ModifierKey.Control);
+        RewiredExtensionModule.AddKeybind("FutrooModQuickStashToNearby", "Quick stash to nearby (Futroo's Mod)", KeyboardKeyCode.A, ModifierKey.Control);
+        RewiredExtensionModule.AddKeybind("FutrooModQuickGetFromNearby", "Quick get from nearby (Futroo's Mod)", KeyboardKeyCode.D, ModifierKey.Control);
 
         RewiredExtensionModule.rewiredStart += OnRewiredStart;
     }
 
     public void Init()
     {
-        UnityEngine.Debug.Log("Successfully initiated QuickStashAndGet V" + Version);
+        UnityEngine.Debug.Log("Successfully initiated QuickStashAndGet V" + VERSION);
     }
 
     public void Shutdown()
@@ -40,9 +55,9 @@ public class QuickStash : IMod
 
     }
 
-    public void ModObjectLoaded(Object obj)
+    public void ModObjectLoaded(UnityEngine.Object obj)
     {
-
+        
     }
 
     public bool CanBeUnloaded()
@@ -110,7 +125,7 @@ public class QuickStash : IMod
         if (chestCount > 0)
         {
             Vector3 _textPos = GameManagers.GetMainManager().player.RenderPosition + new Vector3(0, 1.5f, 0);
-            CreateCoolText("Stashing to " + chestCount + " chest(s).", new Color(0.769f, 0f, 1f), _textPos);
+            CreateCoolText("Stashing to " + chestCount + " chest(s).", new Color(1f, 0f, 0.5f), _textPos);
         }
         else
         {
