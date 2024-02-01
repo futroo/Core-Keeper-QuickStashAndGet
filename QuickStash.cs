@@ -14,7 +14,7 @@ using System;
 
 public class QuickStash : IMod
 {
-    public const string VERSION = "1.0.1";
+    public const string VERSION = "1.0.2";
     public const string NAME = "QuickStashAndGet";
     public const string AUTHOR = "Futroo";
 
@@ -103,14 +103,14 @@ public class QuickStash : IMod
 
         int chestCount = 0;
 		
-        Transform cameraManager = GameObject.Find("Camera Manager").transform;
-        List<Transform> origoTransforms = cameraManager.GetAllChildren().Where(obj => obj.name == "OrigoTransform").ToList();
+        Transform poolChest = GameObject.Find("Pool Chest").transform;
+        List<Transform> allChests = poolChest.GetAllChildren().Where(obj => obj.name.Contains("Chest")).ToList();
 
-        foreach(Transform t in origoTransforms)
+        foreach (Transform t in allChests)
         {
-            foreach (var _chest in t.GetAllChildren().Where(obj => obj.name.Contains("Chest") && obj.gameObject.activeInHierarchy))
+            if (t.gameObject.activeInHierarchy)
             {
-                Chest _chestComponent = _chest.GetComponent<Chest>();
+                Chest _chestComponent = t.GetComponent<Chest>();
                 if (_chestComponent != null && IsInRange(pl.WorldPosition, _chestComponent.WorldPosition, nearbyDistance))
                 {
                     InventoryHandler chestInventoryHandler = _chestComponent.inventoryHandler;
@@ -150,14 +150,14 @@ public class QuickStash : IMod
 
         int chestCount = 0;
 
-        Transform cameraManager = GameObject.Find("Camera Manager").transform;
-        List<Transform> origoTransforms = cameraManager.GetAllChildren().Where(obj => obj.name == "OrigoTransform").ToList();
+        Transform poolChest = GameObject.Find("Pool Chest").transform;
+        List<Transform> allChests = poolChest.GetAllChildren().Where(obj => obj.name.Contains("Chest")).ToList();
 
-        foreach (Transform t in origoTransforms)
+        foreach (Transform t in allChests)
         {
-            foreach (var _chest in t.GetAllChildren().Where(obj => obj.name.Contains("Chest") && obj.gameObject.activeInHierarchy))
+            if (t.gameObject.activeInHierarchy)
             {
-                Chest _chestComponent = _chest.GetComponent<Chest>();
+                Chest _chestComponent = t.GetComponent<Chest>();
                 if (_chestComponent != null && IsInRange(pl.WorldPosition, _chestComponent.WorldPosition, nearbyDistance))
                 {
                     InventoryHandler chestInventoryHandler = _chestComponent.inventoryHandler;
