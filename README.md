@@ -6,7 +6,7 @@
 
 ## Introduction
 
-Quick Stash is a mod for the game Core Keeper that enhances inventory management by allowing players to quickly stash and retrieve items from nearby containers (4 meters range). This mod is designed to streamline the process of storing items in existing containers, making it easier and quicker to manage your inventory and resources.
+Quick Stash is a mod for the game Core Keeper that enhances inventory management by allowing players to quickly stash and retrieve items from nearby containers (5 meters range). This mod is designed to streamline the process of storing items in existing containers, making it easier and quicker to manage your inventory and resources.
 
 ## Features
 
