@@ -14,7 +14,7 @@ using System;
 
 public class QuickStash : IMod
 {
-    public const string VERSION = "1.0.2";
+    public const string VERSION = "1.0.3";
     public const string NAME = "QuickStashAndGet";
     public const string AUTHOR = "Futroo";
 
@@ -103,25 +103,28 @@ public class QuickStash : IMod
 
         int chestCount = 0;
 		
-        Transform poolChest = GameObject.Find("Pool Chest").transform;
-        List<Transform> allChests = poolChest.GetAllChildren().Where(obj => obj.name.Contains("Chest")).ToList();
-
-        foreach (Transform t in allChests)
-        {
-            if (t.gameObject.activeInHierarchy)
-            {
-                Chest _chestComponent = t.GetComponent<Chest>();
-                if (_chestComponent != null && IsInRange(pl.WorldPosition, _chestComponent.WorldPosition, nearbyDistance))
-                {
-                    InventoryHandler chestInventoryHandler = _chestComponent.inventoryHandler;
-                    if (chestInventoryHandler != null)
-                    {
-                        pl.playerInventoryHandler.QuickStack(chestInventoryHandler);
-                        chestCount++;
-                    }
-                }
-            }
-        }
+       	Transform poolChest = GameObject.Find("Pool Chest").transform;
+	Transform poolBossChest = GameObject.Find("Pool BossChest").transform;
+	Transform poolNonPaintableChest = GameObject.Find("Pool NonPaintableChest").transform;
+	
+	List<Transform> allChests = poolChest.GetAllChildren().Where(obj =>obj.gameObject.activeSelf).ToList();
+	allChests.AddRange(poolBossChest.GetAllChildren().Where(obj => obj.gameObject.activeSelf).ToList());
+	allChests.AddRange(poolNonPaintableChest.GetAllChildren().Where(obj => obj.gameObject.activeSelf).ToList());
+	
+	foreach (Transform t in allChests)
+	{
+		Chest _chestComponent = t.GetComponent<Chest>();
+		if (_chestComponent != null && IsInRange(pl.WorldPosition, _chestComponent.WorldPosition, nearbyDistance))
+		{
+			InventoryHandler chestInventoryHandler = _chestComponent.inventoryHandler;
+			if (chestInventoryHandler != null)
+			{
+				pl.playerInventoryHandler.QuickStack(chestInventoryHandler);
+				chestCount++;
+			}
+		}
+	}
+		
         if (chestCount > 0)
         {
             Vector3 _textPos = GameManagers.GetMainManager().player.RenderPosition + new Vector3(0, 1.5f, 0);
@@ -151,24 +154,26 @@ public class QuickStash : IMod
         int chestCount = 0;
 
         Transform poolChest = GameObject.Find("Pool Chest").transform;
-        List<Transform> allChests = poolChest.GetAllChildren().Where(obj => obj.name.Contains("Chest")).ToList();
+	Transform poolBossChest = GameObject.Find("Pool BossChest").transform;
+	Transform poolNonPaintableChest = GameObject.Find("Pool NonPaintableChest").transform;
 
-        foreach (Transform t in allChests)
-        {
-            if (t.gameObject.activeInHierarchy)
-            {
-                Chest _chestComponent = t.GetComponent<Chest>();
-                if (_chestComponent != null && IsInRange(pl.WorldPosition, _chestComponent.WorldPosition, nearbyDistance))
-                {
-                    InventoryHandler chestInventoryHandler = _chestComponent.inventoryHandler;
-                    if (chestInventoryHandler != null)
-                    {
-                        chestInventoryHandler.QuickStack(pl.playerInventoryHandler);
-                        chestCount++;
-                    }
-                }
-            }
-        }
+	List<Transform> allChests = poolChest.GetAllChildren().Where(obj => obj.gameObject.activeSelf).ToList();
+	allChests.AddRange(poolBossChest.GetAllChildren().Where(obj => obj.gameObject.activeSelf).ToList());
+	allChests.AddRange(poolNonPaintableChest.GetAllChildren().Where(obj => obj.gameObject.activeSelf).ToList());
+
+	foreach (Transform t in allChests)
+	{
+		Chest _chestComponent = t.GetComponent<Chest>();
+		if (_chestComponent != null && IsInRange(pl.WorldPosition, _chestComponent.WorldPosition, nearbyDistance))
+		{
+			InventoryHandler chestInventoryHandler = _chestComponent.inventoryHandler;
+			if (chestInventoryHandler != null)
+			{
+				chestInventoryHandler.QuickStack(pl.playerInventoryHandler);
+				chestCount++;
+			}
+		}
+	}
 
         if (chestCount > 0)
         {
